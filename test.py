@@ -3,10 +3,12 @@ import sys
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QIcon, QDesktopServices
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout,QWidget
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
                             NavigationAvatarWidget, qrouter, SubtitleLabel, setFont)
 from qfluentwidgets import FluentIcon as FIF
+from focus_interface import FocusInterface
+
 
 
 class Widget(QFrame):
@@ -29,11 +31,17 @@ class Window(MSFluentWindow):
         super().__init__()
 
         # create sub interface
-        self.homeInterface = Widget('Home Interface', self)
-        self.appInterface = Widget('Application Interface', self)
-        self.videoInterface = Widget('Video Interface', self)
+        self.homeInterface = FocusInterface(self)
+        # 原代码：self.homeInterface = Widget('Home Interface', self)
+        self.appInterface = Widget('advance transfer Interface', self)
+        self.videoInterface = Widget('translator Interface', self)
         self.setting = Widget('setting', self)
         self.libraryInterface = Widget('library Interface', self)
+
+
+
+
+
 
 
 
@@ -81,7 +89,7 @@ class Window(MSFluentWindow):
 
 
 if __name__ == '__main__':
-    # setTheme(Theme.DARK)
+    setTheme(Theme.LIGHT)
 
     app = QApplication(sys.argv)
     w = Window()
