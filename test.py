@@ -1,7 +1,7 @@
 # coding:utf-8
 import sys
 
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout,QWidget
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
@@ -39,12 +39,6 @@ class Window(MSFluentWindow):
         self.libraryInterface = Widget('library Interface', self)
 
 
-
-
-
-
-
-
         self.initNavigation()
         self.initWindow()
 
@@ -68,7 +62,7 @@ class Window(MSFluentWindow):
 
     def initWindow(self):
         self.resize(900, 700)
-        self.setWindowIcon(QIcon(':/qfluentwidgets/images/logo.png'))
+        self.setWindowIcon(QIcon('ui/logo.png'))
         self.setWindowTitle('Fluent Transfer')
 
         desktop = QApplication.screens()[0].availableGeometry()
@@ -89,7 +83,7 @@ class Window(MSFluentWindow):
 
 
 if __name__ == '__main__':
-    setTheme(Theme.LIGHT)
+    setTheme(Theme.AUTO)
 
     app = QApplication(sys.argv)
     w = Window()
