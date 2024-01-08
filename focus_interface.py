@@ -3,18 +3,19 @@ import threading
 from functools import partial
 from threading import Thread
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, QThread, Signal
 from PySide6.QtGui import QColor, QIcon, QDesktopServices
-from PySide6.QtWidgets import QWidget, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QWidget, QGraphicsDropShadowEffect, QFileDialog
 from qfluentwidgets import FluentIcon, InfoBarIcon, InfoBar, InfoBarPosition
 
 from FocusInterface_v2 import Ui_FocusInterface
 from openlrc import LRCer
 import os
-
-from concurrent.futures import ThreadPoolExecutor
-
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
+global file_path,country,trans_switch
+
+
 
 
 class FocusInterface(Ui_FocusInterface, QWidget):
@@ -58,15 +59,12 @@ class FocusInterface(Ui_FocusInterface, QWidget):
             lambda: QDesktopServices.openUrl("https://github.com/SubtitleEdit/subtitleedit"))
         self.ToolButton_4.clicked.connect(lambda: QDesktopServices.openUrl("https://www.subtitlecat.com/"))
 
-
         # progress bar
         self.loading_bar1.stop()
-
-        self.startFocusButton.clicked.connect(self.activate_lrc)
-
-
-
-
+        # 启动！
+        self.startFocusButton.clicked.connect(self.start_calculation)
+        # set open_file button function
+        self.open_fileButton.clicked.connect(self.get_dict)
 
     def setShadowEffect(self, card: QWidget):
         shadowEffect = QGraphicsDropShadowEffect(self)
@@ -78,31 +76,64 @@ class FocusInterface(Ui_FocusInterface, QWidget):
     def createSuccessInfoBar(self):
         # convenient class mothod
         InfoBar.success(
-            title='任务完成',
+            title='转译任务完成',
             content="文件已生成于根目录，请前去查看",
             orient=Qt.Horizontal,
             isClosable=True,
             position=InfoBarPosition.BOTTOM_RIGHT,
             # position='Custom',   # NOTE: use custom info bar manager
-            duration=80000,
+            duration=30000,
             parent=self
         )
-    def activate_lrc(self):
+
+    def get_dict(self):  # 获取文件路径
+        file_dict = QFileDialog.getOpenFileName(parent=self, caption="请选择文件路径",
+                                                filter=(
+                                                    "All Files (*.*);;Videos (*.mp4 *.avi *.mpeg);; Audios (*.mp3 *.wav *.aac "))
+        # 通过eval将字符串转换为元组
+        path_tuple = eval(str(file_dict))
+        # 获取路径部分
+        path = path_tuple[0]
+        # 获取纯路径
+        pure_path = os.path.normpath(path)
+        self.file_LineEdit.setText(pure_path)
+
+    def start_calculation(self):
+        # 创建并启动线程
+        global file_path,country,trans_switch
+        self.loading_bar1.start()
+
+        file_path = self.file_LineEdit.text()
+        country=self.country_selector.text()
+        trans_switch=str(self.translate_SwitchButton.isChecked())
+        self.worker_thread = WorkerThread()
+        self.worker_thread.finished_signal.connect(self.on_calculation_finished)
+        self.worker_thread.start()
+
+    def on_calculation_finished(self, result):
+        # 计算完成后的处理，更新 UI
+        self.loading_bar1.stop()
         FocusInterface.createSuccessInfoBar(self)
-        t1 = threading.Thread(target=FocusInterface.run_lrc(self))
-        t1.start()
+        print(result)
+        self.worker_thread.quit()
+        self.worker_thread.wait()
 
 
+class WorkerThread(QThread):
+    finished_signal = Signal(str)
+    def run(self):
+        # 执行lrc任务
+        result = self.perform_calculation()
 
+        # 发送结束结果信号
+        self.finished_signal.emit(result)
 
-    def run_lrc(self):
-        file_target = self.file_LineEdit.text()
-        target_lan = self.country_selector.text()
-        skip_trans = self.translate_SwitchButton.isChecked()
+    def perform_calculation(self):
+        # lrc计算
+        file_target = file_path
+        target_lan = country
+        skip_trans = trans_switch
 
         lrcer = LRCer()
-        lrcer.run(paths=file_target,target_lang=str(target_lan), skip_trans=skip_trans)
-
-
-
+        lrcer.run(paths=file_target, target_lang=str(target_lan), skip_trans=skip_trans)
 
