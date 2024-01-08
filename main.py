@@ -1,7 +1,7 @@
 # coding:utf-8
 import sys
 
-from PySide6.QtCore import Qt, QUrl, QSize
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QIcon, QDesktopServices
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout,QWidget
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
@@ -71,12 +71,14 @@ class Window(MSFluentWindow):
 
     def showMessageBox(self):
         w = MessageBox(
-            '支持作者🥰',
-            '可以关注一下b站账号~',
-            self
+            'Fluent_transfer✨',
+            'the code is lisensed under GNU General Public License v3\n'
+            '了解更多，关注github page🤣🤣\n\n'
+            'Copyright © 2024 by infinitebook.',
+           self
         )
-        w.yesButton.setText('前往关注')
-        w.cancelButton.setText('下次一定')
+        w.yesButton.setText('github page')
+        w.cancelButton.setText('ok')
 
         if w.exec():
             QDesktopServices.openUrl(QUrl("https://space.bilibili.com/22073772?spm_id_from=333.1007.0.0"))
