@@ -1,14 +1,19 @@
 # coding:utf-8
+import os
 import sys
 
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout,QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
-                            NavigationAvatarWidget, qrouter, SubtitleLabel, setFont)
+                            SubtitleLabel, setFont, SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
-from focus_interface import FocusInterface
+from interface.focus_interface import FocusInterface
+from interface.setting_interface import SettingInterface
 
+# setting interface import
+from ui.setting_common.signal_bus import signalBus
+from ui.setting_common.config import cfg
 
 
 class Widget(QFrame):
@@ -24,50 +29,65 @@ class Widget(QFrame):
         self.setObjectName(text.replace(' ', '-'))
 
 
-
 class Window(MSFluentWindow):
 
     def __init__(self):
         super().__init__()
+        self.initWindow()
 
         # create sub interface
         self.homeInterface = FocusInterface(self)
         # 原代码：self.homeInterface = Widget('Home Interface', self)
+
         self.appInterface = Widget('advance transfer Interface', self)
         self.videoInterface = Widget('translator Interface', self)
-        self.setting = Widget('setting', self)
+
+        self.setting = SettingInterface(self)
+        # self.setting = Widget('setting', self)
+
         self.libraryInterface = Widget('library Interface', self)
 
+        self.connectSignalToSlot()
 
         self.initNavigation()
-        self.initWindow()
+        self.splashScreen.finish()
+
+    def connectSignalToSlot(self):
+        signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页', FIF.HOME_FILL, )
         self.addSubInterface(self.appInterface, FIF.SYNC, '转译')
         self.addSubInterface(self.videoInterface, FIF.LANGUAGE, '翻译')
-        self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', FIF.LIBRARY_FILL,NavigationItemPosition.BOTTOM)
-        self.addSubInterface(self.setting,FIF.SETTING,'设置',FIF.SETTING,NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', FIF.LIBRARY_FILL,
+                             NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.setting, FIF.SETTING, '设置', FIF.SETTING, NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.addItem(
             routeKey='Help',
-            icon=FIF.HELP,
-            text='帮助',
+            icon=QIcon('ui/rsc/shasha.png'),
+            text='',
             onClick=self.showMessageBox,
             selectable=False,
             position=NavigationItemPosition.BOTTOM,
         )
 
-        self.navigationInterface.setCurrentItem(self.homeInterface.objectName())
-
     def initWindow(self):
-        self.resize(900, 700)
-        self.setWindowIcon(QIcon('ui/logo.png'))
+        self.resize(960, 780)
+        self.setMinimumWidth(760)
+        self.setWindowIcon(QIcon('ui/rsc/logo.png'))
         self.setWindowTitle('Fluent Transfer')
+
+        # create splash screen
+        self.splashScreen = SplashScreen(self.windowIcon(), self)
+        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.raise_()
 
         desktop = QApplication.screens()[0].availableGeometry()
         w, h = desktop.width(), desktop.height()
-        self.move(w//2 - self.width()//2, h//2 - self.height()//2)
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+        self.show()
+        QApplication.processEvents()
 
     def showMessageBox(self):
         w = MessageBox(
@@ -75,7 +95,7 @@ class Window(MSFluentWindow):
             'the code is lisensed under GNU General Public License v3\n'
             '了解更多，关注github page🤣🤣\n\n'
             'Copyright © 2024 by infinitebook.',
-           self
+            self
         )
         w.yesButton.setText('github page')
         w.cancelButton.setText('ok')
@@ -85,9 +105,19 @@ class Window(MSFluentWindow):
 
 
 if __name__ == '__main__':
-    setTheme(Theme.AUTO)
+    setTheme(Theme.LIGHT)
 
+    # enable dpi scale
+    if cfg.get(cfg.dpiScale) != "Auto":
+        os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
+        os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
+
+    # create application
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
+
+    # create main window
     w = Window()
     w.show()
+
     app.exec()

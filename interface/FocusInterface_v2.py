@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'FocusInterface_v2.ui'
+## Form generated from reading UI file 'FocusInterface_v2.rsc'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -22,7 +22,7 @@ from qfluentwidgets import (BodyLabel, CardWidget, EditableComboBox, HyperlinkBu
     IconWidget, IndeterminateProgressBar, LineEdit, PrimaryPushButton,
     PushButton, StrongBodyLabel, SubtitleLabel, SwitchButton,
     ToolButton, TransparentToolButton)
-import resource_rc
+import interface.resource_rc
 
 class Ui_FocusInterface(object):
     def setupUi(self, FocusInterface):

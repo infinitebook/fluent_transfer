@@ -3,12 +3,12 @@ import threading
 from functools import partial
 from threading import Thread
 
-from PySide6.QtCore import QSize, Qt, QThread, Signal
+from PySide6.QtCore import QSize, Qt, QThread, Signal , QRunnable , Slot , QThreadPool
 from PySide6.QtGui import QColor, QIcon, QDesktopServices
 from PySide6.QtWidgets import QWidget, QGraphicsDropShadowEffect, QFileDialog
 from qfluentwidgets import FluentIcon, InfoBarIcon, InfoBar, InfoBarPosition
 
-from FocusInterface_v2 import Ui_FocusInterface
+from interface.FocusInterface_v2 import Ui_FocusInterface
 from openlrc import LRCer
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -37,13 +37,13 @@ class FocusInterface(Ui_FocusInterface, QWidget):
         self.taskIcon3.setIcon(InfoBarIcon.WARNING)
         self.taskIcon4.setIcon(InfoBarIcon.WARNING)
 
-        self.ToolButton1.setIcon(QIcon('ui/shasha.png'))
+        self.ToolButton1.setIcon(QIcon('ui/rsc/shasha.png'))
         self.ToolButton1.setIconSize(QSize(80, 80))
-        self.ToolButton_2.setIcon(QIcon('ui/233.png'))
+        self.ToolButton_2.setIcon(QIcon('ui/rsc/233.png'))
         self.ToolButton_2.setIconSize(QSize(120, 120))
-        self.ToolButton_3.setIcon(QIcon('ui/se.png'))
+        self.ToolButton_3.setIcon(QIcon('ui/rsc/se.png'))
         self.ToolButton_3.setIconSize(QSize(100, 100))
-        self.ToolButton_4.setIcon(QIcon('ui/subcat.png'))
+        self.ToolButton_4.setIcon(QIcon('ui/rsc/subcat.png'))
         self.ToolButton_4.setIconSize(QSize(100, 100))
 
         # add shadow effect to card
@@ -59,10 +59,12 @@ class FocusInterface(Ui_FocusInterface, QWidget):
             lambda: QDesktopServices.openUrl("https://github.com/SubtitleEdit/subtitleedit"))
         self.ToolButton_4.clicked.connect(lambda: QDesktopServices.openUrl("https://www.subtitlecat.com/"))
 
-        # progress bar
+        # stop progress bar
         self.loading_bar1.stop()
+
         # 启动！
         self.startFocusButton.clicked.connect(self.start_calculation)
+
         # set open_file button function
         self.open_fileButton.clicked.connect(self.get_dict)
 
