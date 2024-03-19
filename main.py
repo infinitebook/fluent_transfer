@@ -10,6 +10,7 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
 from qfluentwidgets import FluentIcon as FIF
 from interface.focus_interface import FocusInterface
 from interface.setting_interface import SettingInterface
+from interface.view_interface import ViewInterface
 
 # setting interface import
 from ui.setting_common.signal_bus import signalBus
@@ -45,7 +46,8 @@ class Window(MSFluentWindow):
         self.setting = SettingInterface(self)
         # self.setting = Widget('setting', self)
 
-        self.libraryInterface = Widget('library Interface', self)
+        self.libraryInterface = ViewInterface(self)
+        #elf.libraryInterface = Widget('library Interface', self)
 
         self.connectSignalToSlot()
 
@@ -105,7 +107,7 @@ class Window(MSFluentWindow):
 
 
 if __name__ == '__main__':
-    setTheme(Theme.LIGHT)
+    setTheme(Theme.AUTO)
 
     # enable dpi scale
     if cfg.get(cfg.dpiScale) != "Auto":

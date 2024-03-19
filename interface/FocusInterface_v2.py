@@ -22,7 +22,6 @@ from qfluentwidgets import (BodyLabel, CardWidget, EditableComboBox, HyperlinkBu
     IconWidget, IndeterminateProgressBar, LineEdit, PrimaryPushButton,
     PushButton, StrongBodyLabel, SubtitleLabel, SwitchButton,
     ToolButton, TransparentToolButton)
-import interface.resource_rc
 
 class Ui_FocusInterface(object):
     def setupUi(self, FocusInterface):
