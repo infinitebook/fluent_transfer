@@ -1,0 +1,1 @@
+ALTER TABLE file_records AUTO_INCREMENT = 1;

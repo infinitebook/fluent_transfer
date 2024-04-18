@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QFrame, QTreeWidgetItem, QHBoxLayout, QTreeWidgetI
 from qfluentwidgets import TreeWidget, TableWidget
 
 from interface.gallery_interface import GalleryInterface, ToolBar
-from database.demo import FileManager
+from database.data_pro import FileManager
 
 db_params = {
     'host': 'localhost',

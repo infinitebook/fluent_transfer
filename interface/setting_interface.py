@@ -10,9 +10,11 @@ from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ui.setting_common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from ui.setting_common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11,RELEASES_URL
 from ui.setting_common.signal_bus import signalBus
 from ui.setting_common.style_sheet import StyleSheet
+import os
+
 
 
 class SettingInterface(ScrollArea):
@@ -70,14 +72,14 @@ class SettingInterface(ScrollArea):
 
 
         # update software
-        self.updateSoftwareGroup = SettingCardGroup(
-            self.tr("版本更新"), self.scrollWidget)
-        self.updateOnStartUpCard = SwitchSettingCard(
-            FIF.UPDATE,
-            self.tr('在应用开启时检查版本更新'),
-            configItem=cfg.checkUpdateAtStartUp,
-            parent=self.updateSoftwareGroup
-        )
+        # self.updateSoftwareGroup = SettingCardGroup(
+        #     self.tr("版本更新"), self.scrollWidget)
+        # self.updateOnStartUpCard = SwitchSettingCard(
+        #     FIF.UPDATE,
+        #     self.tr('在应用开启时检查版本更新'),
+        #     configItem=cfg.checkUpdateAtStartUp,
+        #     parent=self.updateSoftwareGroup
+        # )
 
         # application
         self.aboutGroup = SettingCardGroup(self.tr('关于'), self.scrollWidget)
@@ -137,7 +139,7 @@ class SettingInterface(ScrollArea):
         self.personalGroup.addSettingCard(self.themeCard)
         self.personalGroup.addSettingCard(self.themeColorCard)
 
-        self.updateSoftwareGroup.addSettingCard(self.updateOnStartUpCard)
+        #self.updateSoftwareGroup.addSettingCard(self.updateOnStartUpCard)
 
         self.aboutGroup.addSettingCard(self.helpCard)
         self.aboutGroup.addSettingCard(self.feedbackCard)
@@ -148,7 +150,7 @@ class SettingInterface(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.musicInThisPCGroup)
         self.expandLayout.addWidget(self.personalGroup)
-        self.expandLayout.addWidget(self.updateSoftwareGroup)
+        #self.expandLayout.addWidget(self.updateSoftwareGroup)
         self.expandLayout.addWidget(self.aboutGroup)
 
     def __showRestartTooltip(self):
@@ -160,15 +162,15 @@ class SettingInterface(ScrollArea):
             parent=self
         )
 
-    def __onDownloadFolderCardClicked(self):
-        """ download folder card clicked slot """
-        folder = QFileDialog.getExistingDirectory(
+    def __onDownloadFolderCardClicked(self): # 设置默认文件夹
+        self.folder = QFileDialog.getExistingDirectory(
             self, self.tr("Choose folder"), "../")
-        if not folder or cfg.get(cfg.downloadFolder) == folder:
+        if not self.folder or cfg.get(cfg.downloadFolder) == self.folder:
             return
 
-        cfg.set(cfg.downloadFolder, folder)
-        self.downloadFolderCard.setContent(folder)
+        self.downloadFolderCard.setContent(self.folder)
+        print("choose default folder:",self.folder)
+        os.environ['DEFAULT_FOLDER_PATH'] = self.folder
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
@@ -186,3 +188,6 @@ class SettingInterface(ScrollArea):
         # about
         self.feedbackCard.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+        self.aboutCard.clicked.connect(
+            lambda:QDesktopServices.openUrl(QUrl(RELEASES_URL))
+        )

@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
                             SubtitleLabel, setFont, SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
-from interface.focus_interface import FocusInterface
+from interface.home_interface02 import FocusInterface
 from interface.setting_interface import SettingInterface
 from interface.view_interface import ViewInterface
 
@@ -40,14 +40,11 @@ class Window(MSFluentWindow):
         self.homeInterface = FocusInterface(self)
         # 原代码：self.homeInterface = Widget('Home Interface', self)
 
-        self.appInterface = Widget('advance transfer Interface', self)
-        self.videoInterface = Widget('translator Interface', self)
+        # self.appInterface = Widget('advance transfer Interface', self)
+        # self.videoInterface = Widget('translator Interface', self)
 
         self.setting = SettingInterface(self)
-        # self.setting = Widget('setting', self)
-
         self.libraryInterface = ViewInterface(self)
-        #elf.libraryInterface = Widget('library Interface', self)
 
         self.connectSignalToSlot()
 
@@ -59,8 +56,8 @@ class Window(MSFluentWindow):
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页', FIF.HOME_FILL, )
-        self.addSubInterface(self.appInterface, FIF.SYNC, '转译')
-        self.addSubInterface(self.videoInterface, FIF.LANGUAGE, '翻译')
+        # self.addSubInterface(self.appInterface, FIF.SYNC, '转译')
+        # self.addSubInterface(self.videoInterface, FIF.LANGUAGE, '翻译')
         self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', FIF.LIBRARY_FILL,
                              NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.setting, FIF.SETTING, '设置', FIF.SETTING, NavigationItemPosition.BOTTOM)

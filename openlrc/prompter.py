@@ -186,7 +186,7 @@ Please translate these subtitles for {self.audio_type}{f" named {self.title}" if
                 # Cant detect language
                 return True
 
-            # get the most setting_common language
+            # get the most common language
             translated_lang = max(set(translated_langs), key=translated_langs.count)
         else:
             detected_lang = self.lan_detector.detect_language_of(' '.join(translation))

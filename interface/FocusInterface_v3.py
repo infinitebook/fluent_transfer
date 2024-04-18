@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'FocusInterface_v2.rsc'
+## Form generated from reading UI file 'FocusInterface_v2.1.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -325,212 +325,6 @@ class Ui_FocusInterface(object):
 
         self.gridLayout.addWidget(self.progressCard, 1, 2, 1, 1)
 
-        self.taskCard = CardWidget(FocusInterface)
-        self.taskCard.setObjectName(u"taskCard")
-        self.taskCard.setMinimumSize(QSize(370, 0))
-        self.taskCard.setMaximumSize(QSize(600, 395))
-        self.gridLayout_6 = QGridLayout(self.taskCard)
-        self.gridLayout_6.setObjectName(u"gridLayout_6")
-        self.gridLayout_3 = QGridLayout()
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.horizontalLayout_7 = QHBoxLayout()
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.taskCardIcon = IconWidget(self.taskCard)
-        self.taskCardIcon.setObjectName(u"taskCardIcon")
-        self.taskCardIcon.setMinimumSize(QSize(18, 18))
-        self.taskCardIcon.setMaximumSize(QSize(18, 18))
-        icon2 = QIcon()
-        icon2.addFile(u":/images/todo.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.taskCardIcon.setIcon(icon2)
-
-        self.horizontalLayout_7.addWidget(self.taskCardIcon)
-
-        self.horizontalSpacer_7 = QSpacerItem(2, 2, QSizePolicy.Fixed, QSizePolicy.Minimum)
-
-        self.horizontalLayout_7.addItem(self.horizontalSpacer_7)
-
-        self.taskLabel = StrongBodyLabel(self.taskCard)
-        self.taskLabel.setObjectName(u"taskLabel")
-
-        self.horizontalLayout_7.addWidget(self.taskLabel)
-
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_7.addItem(self.horizontalSpacer_3)
-
-        self.moreTaskButton = TransparentToolButton(self.taskCard)
-        self.moreTaskButton.setObjectName(u"moreTaskButton")
-
-        self.horizontalLayout_7.addWidget(self.moreTaskButton)
-
-
-        self.gridLayout_3.addLayout(self.horizontalLayout_7, 0, 0, 1, 2)
-
-        self.gridLayout_2 = QGridLayout()
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.hintLabel_2 = BodyLabel(self.taskCard)
-        self.hintLabel_2.setObjectName(u"hintLabel_2")
-        self.hintLabel_2.setProperty("lightColor", QColor(96, 96, 96))
-        self.hintLabel_2.setProperty("darkColor", QColor(206, 206, 206))
-
-        self.gridLayout_2.addWidget(self.hintLabel_2, 3, 0, 1, 1)
-
-
-        self.gridLayout_3.addLayout(self.gridLayout_2, 1, 0, 1, 1)
-
-        self.taskCard1 = CardWidget(self.taskCard)
-        self.taskCard1.setObjectName(u"taskCard1")
-        self.taskCard1.setMinimumSize(QSize(0, 44))
-        self.taskCard1.setMaximumSize(QSize(16777215, 44))
-        self.horizontalLayout_9 = QHBoxLayout(self.taskCard1)
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.horizontalLayout_9.setContentsMargins(15, -1, -1, -1)
-        self.horizontalLayout_8 = QHBoxLayout()
-        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.taskIcon2 = IconWidget(self.taskCard1)
-        self.taskIcon2.setObjectName(u"taskIcon2")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy1.setHorizontalStretch(16)
-        sizePolicy1.setVerticalStretch(16)
-        sizePolicy1.setHeightForWidth(self.taskIcon2.sizePolicy().hasHeightForWidth())
-        self.taskIcon2.setSizePolicy(sizePolicy1)
-        self.taskIcon2.setMinimumSize(QSize(16, 16))
-        self.taskIcon2.setMaximumSize(QSize(16, 16))
-
-        self.horizontalLayout_8.addWidget(self.taskIcon2)
-
-
-        self.horizontalLayout_9.addLayout(self.horizontalLayout_8)
-
-        self.taskLabel2 = BodyLabel(self.taskCard1)
-        self.taskLabel2.setObjectName(u"taskLabel2")
-        self.taskLabel2.setProperty("pixelFontSize", 14)
-        self.taskLabel2.setProperty("strikeOut", True)
-
-        self.horizontalLayout_9.addWidget(self.taskLabel2)
-
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_9.addItem(self.horizontalSpacer_4)
-
-
-        self.gridLayout_3.addWidget(self.taskCard1, 3, 0, 1, 2)
-
-        self.taskCard2 = CardWidget(self.taskCard)
-        self.taskCard2.setObjectName(u"taskCard2")
-        self.taskCard2.setMinimumSize(QSize(0, 44))
-        self.taskCard2.setMaximumSize(QSize(16777215, 44))
-        self.horizontalLayout_12 = QHBoxLayout(self.taskCard2)
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.horizontalLayout_12.setContentsMargins(15, -1, -1, -1)
-        self.horizontalLayout_13 = QHBoxLayout()
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.taskIcon3 = IconWidget(self.taskCard2)
-        self.taskIcon3.setObjectName(u"taskIcon3")
-        sizePolicy1.setHeightForWidth(self.taskIcon3.sizePolicy().hasHeightForWidth())
-        self.taskIcon3.setSizePolicy(sizePolicy1)
-        self.taskIcon3.setMinimumSize(QSize(16, 16))
-        self.taskIcon3.setMaximumSize(QSize(16, 16))
-
-        self.horizontalLayout_13.addWidget(self.taskIcon3)
-
-
-        self.horizontalLayout_12.addLayout(self.horizontalLayout_13)
-
-        self.taskLabel3 = BodyLabel(self.taskCard2)
-        self.taskLabel3.setObjectName(u"taskLabel3")
-
-        self.horizontalLayout_12.addWidget(self.taskLabel3)
-
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_12.addItem(self.horizontalSpacer_6)
-
-
-        self.gridLayout_3.addWidget(self.taskCard2, 4, 0, 1, 2)
-
-        self.taskCard3 = CardWidget(self.taskCard)
-        self.taskCard3.setObjectName(u"taskCard3")
-        self.taskCard3.setMinimumSize(QSize(0, 44))
-        self.taskCard3.setMaximumSize(QSize(16777215, 44))
-        self.horizontalLayout_10 = QHBoxLayout(self.taskCard3)
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_10.setContentsMargins(15, -1, -1, -1)
-        self.horizontalLayout_11 = QHBoxLayout()
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.taskIcon4 = IconWidget(self.taskCard3)
-        self.taskIcon4.setObjectName(u"taskIcon4")
-        sizePolicy1.setHeightForWidth(self.taskIcon4.sizePolicy().hasHeightForWidth())
-        self.taskIcon4.setSizePolicy(sizePolicy1)
-        self.taskIcon4.setMinimumSize(QSize(16, 16))
-        self.taskIcon4.setMaximumSize(QSize(16, 16))
-
-        self.horizontalLayout_11.addWidget(self.taskIcon4)
-
-
-        self.horizontalLayout_10.addLayout(self.horizontalLayout_11)
-
-        self.taskLabel4 = BodyLabel(self.taskCard3)
-        self.taskLabel4.setObjectName(u"taskLabel4")
-
-        self.horizontalLayout_10.addWidget(self.taskLabel4)
-
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_10.addItem(self.horizontalSpacer_5)
-
-
-        self.gridLayout_3.addWidget(self.taskCard3, 5, 0, 1, 2)
-
-        self.verticalSpacer_8 = QSpacerItem(20, 18, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_3.addItem(self.verticalSpacer_8, 1, 1, 1, 1)
-
-        self.taskCard1_2 = CardWidget(self.taskCard)
-        self.taskCard1_2.setObjectName(u"taskCard1_2")
-        self.taskCard1_2.setMinimumSize(QSize(0, 44))
-        self.taskCard1_2.setMaximumSize(QSize(16777215, 44))
-        self.horizontalLayout_14 = QHBoxLayout(self.taskCard1_2)
-        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-        self.horizontalLayout_14.setContentsMargins(15, -1, -1, -1)
-        self.horizontalLayout_15 = QHBoxLayout()
-        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.taskIcon1 = IconWidget(self.taskCard1_2)
-        self.taskIcon1.setObjectName(u"taskIcon1")
-        sizePolicy1.setHeightForWidth(self.taskIcon1.sizePolicy().hasHeightForWidth())
-        self.taskIcon1.setSizePolicy(sizePolicy1)
-        self.taskIcon1.setMinimumSize(QSize(16, 16))
-        self.taskIcon1.setMaximumSize(QSize(16, 16))
-
-        self.horizontalLayout_15.addWidget(self.taskIcon1)
-
-
-        self.horizontalLayout_14.addLayout(self.horizontalLayout_15)
-
-        self.taskLabel1 = BodyLabel(self.taskCard1_2)
-        self.taskLabel1.setObjectName(u"taskLabel1")
-        self.taskLabel1.setProperty("pixelFontSize", 14)
-        self.taskLabel1.setProperty("strikeOut", True)
-
-        self.horizontalLayout_14.addWidget(self.taskLabel1)
-
-        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_14.addItem(self.horizontalSpacer_10)
-
-
-        self.gridLayout_3.addWidget(self.taskCard1_2, 2, 0, 1, 2)
-
-        self.verticalSpacer_7 = QSpacerItem(17, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout_3.addItem(self.verticalSpacer_7, 6, 0, 1, 2)
-
-
-        self.gridLayout_6.addLayout(self.gridLayout_3, 0, 0, 1, 1)
-
-
-        self.gridLayout.addWidget(self.taskCard, 2, 0, 1, 1)
-
         self.gridLayout.setColumnStretch(0, 1)
 
         self.horizontalLayout_3.addLayout(self.gridLayout)
@@ -547,16 +341,10 @@ class Ui_FocusInterface(object):
         self.hintLabel.setText(QCoreApplication.translate("FocusInterface", u"\u9009\u62e9\u4f60\u8981\u8f6c\u6362\u7684\u97f3\u9891\u6216\u89c6\u9891\uff0c\u7136\u540e\u9009\u62e9\u9700\u8981\u7684\u8bed\u8a00", None))
         self.file_LineEdit.setText("")
         self.open_fileButton.setText(QCoreApplication.translate("FocusInterface", u"\u6253\u5f00\u6587\u4ef6", None))
-        self.BodyLabel.setText(QCoreApplication.translate("FocusInterface", u"\u7ffb\u8bd1", None))
+        self.BodyLabel.setText(QCoreApplication.translate("FocusInterface", u"\u8df3\u8fc7\u7ffb\u8bd1", None))
         self.country_selector.setText("")
         self.startFocusButton.setText(QCoreApplication.translate("FocusInterface", u"\u542f\u52a8\uff01", None))
-        self.focusPeriodLabel.setText(QCoreApplication.translate("FocusInterface", u"one transfer", None))
+        self.focusPeriodLabel.setText(QCoreApplication.translate("FocusInterface", u"fluent transfer", None))
         self.dailyProgressLabel.setText(QCoreApplication.translate("FocusInterface", u"\u5de5\u5177\u7bb1", None))
-        self.taskLabel.setText(QCoreApplication.translate("FocusInterface", u"\u8def\u7ebf\u56fe", None))
-        self.hintLabel_2.setText(QCoreApplication.translate("FocusInterface", u"    \u5f00\u53d1\u4e2d~", None))
-        self.taskLabel2.setText(QCoreApplication.translate("FocusInterface", u"\u8f6c\u5f55\u529f\u80fd\u5b9e\u73b0", None))
-        self.taskLabel3.setText(QCoreApplication.translate("FocusInterface", u"\u6240\u6709\u9875\u9762ui", None))
-        self.taskLabel4.setText(QCoreApplication.translate("FocusInterface", u"openai api\u7ffb\u8bd1\u5b9e\u73b0", None))
-        self.taskLabel1.setText(QCoreApplication.translate("FocusInterface", u"\u4e3b\u9875ui", None))
     # retranslateUi
 

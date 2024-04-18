@@ -2,6 +2,7 @@ import pymysql
 import os
 import subprocess
 
+
 # 数据库连接参数
 db_params = {
     'host': 'localhost',
@@ -63,6 +64,7 @@ class FileManager:
         """通过ID删除对应的文件，然后删除数据库中的条目"""
         # 首先获取文件路径
         sql_select = f"SELECT file_path FROM {table} WHERE id = %s"
+        auto_increment = "ALTER TABLE file_records AUTO_INCREMENT = 1"
         try:
             self.cursor.execute(sql_select, (id,))
             result = self.cursor.fetchone()
@@ -75,8 +77,12 @@ class FileManager:
                     # 文件删除成功后，删除数据库中的条目
                     sql_delete = f"DELETE FROM {table} WHERE id = %s"
                     self.cursor.execute(sql_delete, (id,))
+                    self.cursor.execute(auto_increment)
                     self.conn.commit()
+
                     print("Database entry deleted successfully.")
+
+
                 except Exception as e:
                     print(f"An error occurred when deleting the file: {e}")
                     self.conn.rollback()
@@ -84,6 +90,18 @@ class FileManager:
                 print("No entry found with the given ID.")
         except Exception as e:
             print(f"An error occurred when selecting the file path: {e}")
+
+    def update_file_path(self, table, old_file_path, new_file_path):
+        """更新具有特定file_path的所有条目，将它们的file_path改为新的file_path"""
+        sql = f"UPDATE {table} SET file_path = %s WHERE file_path = %s"
+        try:
+            self.cursor.execute(sql, (new_file_path, old_file_path))
+            count = self.cursor.rowcount  # 获取受影响的行数
+            self.conn.commit()
+            print(f"File path updated successfully in {count} records.")
+        except Exception as e:
+            print(f"An error occurred while updating the file paths: {e}")
+            self.conn.rollback()
 
     def close(self):
         """关闭数据库连接"""

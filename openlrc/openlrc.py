@@ -39,7 +39,6 @@ class LRCer:
     :param vad_options: Parameters for VAD model.
     :param proxy: Proxy for openai requests. e.g. 'http://127.0.0.1:7890'
     """
-
     def __init__(self, model_name='large-v3', compute_type='float16', fee_limit=0.1, consumer_thread=11,
                  asr_options=None, vad_options=None, preprocess_options=None, proxy=None):
         self.fee_limit = fee_limit
@@ -129,12 +128,13 @@ class LRCer:
             # xxx_transcribed_optimized_translated.json
             translated_path = extend_filename(transcribed_opt_sub.filename, '_translated')
 
-            final_subtitle_path = Path(translated_path.parent / f'{audio_name}.json')
-            if final_subtitle_path.exists():
-                final_subtitle = Subtitle.from_json(final_subtitle_path)
+            final_json_path = Path(translated_path.parent / f'{audio_name}.json')
+            if final_json_path.exists():
+                final_subtitle = Subtitle.from_json(final_json_path)
             elif skip_trans:
+                shutil.copy(transcribed_opt_sub.filename, final_json_path)
                 final_subtitle = transcribed_opt_sub
-                final_subtitle.filename = final_subtitle
+                final_subtitle.filename = final_json_path
             else:
                 with Timer('Translation process'):
                     try:
