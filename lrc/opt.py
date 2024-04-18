@@ -7,9 +7,9 @@ from typing import Union
 
 import zhconv
 
-from openlrc.logger import logger
-from openlrc.subtitle import Subtitle
-from openlrc.utils import extend_filename
+from lrc.logger import logger
+from lrc.subtitle import Subtitle
+from lrc.utils import extend_filename
 
 # Different language may need different threshold
 cut_long_threshold = {
@@ -19,6 +19,16 @@ cut_long_threshold = {
 
 
 class SubtitleOptimizer:
+    """
+    SubtitleOptimizer class is used to optimize subtitles by performing various operations. For example, merging same
+    text, merging short duration subtitles, merging repeated patterns, cutting long texts, converting traditional
+    Chinese to Mandarin, optimizing punctuation, removing '<unk>' tags, removing empty elements, and stripping
+    whitespace.
+
+    Args:
+        subtitle (Union[Path, Subtitle]): The subtitle to be optimized.
+    """
+
     def __init__(self, subtitle: Union[Path, Subtitle]):
         if isinstance(subtitle, Path):
             subtitle = Subtitle.from_json(subtitle)
@@ -44,7 +54,7 @@ class SubtitleOptimizer:
 
         self.subtitle.segments = new_elements
 
-    def merge_short(self, threshold=1.5):
+    def merge_short(self, threshold=1.2):
         """
         Merge the short duration subtitle.
         """
@@ -54,9 +64,9 @@ class SubtitleOptimizer:
         for i, element, in enumerate(self.subtitle.segments):
             if i == 0 or element.duration >= threshold:
                 if merged_element:
-                    if merged_element.duration < 1:
-                        # If the merged elements is still too small, find the smaller element nearby and merge it
-                        if new_elements[-1].duration > element.duration:
+                    if merged_element.duration < 1.5:
+                        # If the merged elements is still too small, find the closer element nearby and merge it
+                        if element.start - merged_element.end < merged_element.start - new_elements[-1].end:
                             # merge to the next
                             element.text = merged_element.text + element.text
                             element.start = merged_element.start
@@ -119,6 +129,44 @@ class SubtitleOptimizer:
 
         self.subtitle.segments = new_elements
 
+    def punctuation_optimization(self):
+        def replace_punctuation_with_chinese(text):
+            # Mapping of English punctuation to Chinese punctuation
+            punctuation_mapping = {
+                ',': '，',
+                '.': '。',
+                '?': '？',
+                '!': '！',
+                ':': '：',
+                ';': '；',
+                '"': '”',
+                "'": '’',
+                '(': '（',
+                ')': '）',
+                '[': '【',
+                ']': '】',
+                '{': '｛',
+                '}': '｝'
+            }
+
+            # Compile a regular expression pattern for all English punctuation marks
+            pattern = re.compile("|".join(map(re.escape, punctuation_mapping.keys())))
+
+            # Replace the punctuation in the text
+            result = pattern.sub(lambda match: punctuation_mapping[match.group(0)], text)
+
+            # Replace consecutive (>3) 。 with ...
+            result = re.sub(r'(。){3,}', '...', result)
+
+            return result
+
+        new_elements = self.subtitle.segments
+
+        for i, element in enumerate(new_elements):
+            new_elements[i].text = replace_punctuation_with_chinese(element.text)
+
+        self.subtitle.segments = new_elements
+
     def remove_unk(self):
         new_elements = self.subtitle.segments
 
@@ -150,6 +198,8 @@ class SubtitleOptimizer:
 
             if self.subtitle.lang.lower() in ['zh-cn', 'zh']:
                 self.traditional2mandarin()
+            if self.subtitle.lang.lower() in ['zh-cn', 'zh', 'zh-tw']:
+                self.punctuation_optimization()
 
     def save(self, output_name=None, update_name=False):
         optimized_name = extend_filename(self.filename, '_optimized') if not output_name else output_name

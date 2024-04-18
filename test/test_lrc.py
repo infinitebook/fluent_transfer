@@ -1,4 +1,4 @@
-from openlrc.openlrc import LRCer
+from lrc.lrc import LRCer
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 

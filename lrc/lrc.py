@@ -12,35 +12,41 @@ from typing import List
 
 from faster_whisper.transcribe import Segment
 
-from openlrc.context import Context
-from openlrc.defaults import default_asr_options, default_vad_options, default_preprocess_options
-from openlrc.logger import logger
-from openlrc.opt import SubtitleOptimizer
-from openlrc.preprocess import Preprocessor
-from openlrc.subtitle import Subtitle
-from openlrc.transcribe import Transcriber
-from openlrc.translate import GPTTranslator
-from openlrc.utils import Timer, extend_filename, get_audio_duration, format_timestamp, extract_audio, \
+from lrc.context import Context
+from lrc.defaults import default_asr_options, default_vad_options, default_preprocess_options
+from lrc.logger import logger
+from lrc.opt import SubtitleOptimizer
+from lrc.preprocess import Preprocessor
+from lrc.subtitle import Subtitle, BilingualSubtitle
+from lrc.transcribe import Transcriber
+from lrc.translate import LLMTranslator
+from lrc.utils import Timer, extend_filename, get_audio_duration, format_timestamp, extract_audio, \
     get_file_type
 
 
 class LRCer:
     """
-     :param model_name: Name of whisper model (tiny, tiny.en, base, base.en, small, small.en, medium,
-                    medium.en, large-v1, large-v2, large-v3) When a size is configured, the converted model is downloaded
-                    from the Hugging Face Hub.
-                    Default: ``large-v3``
-    :param compute_type: The type of computation to use. Can be ``int8``, ``int8_float16``, ``int16``,
-                    ``float16`` or ``float32``.
-                    Default: ``float16``
-    :param fee_limit: The maximum fee you are willing to pay for one translation call. Default: ``0.1``
-    :param consumer_thread: To prevent exceeding the RPM and TPM limits set by OpenAI, the default is TPM/MAX_TOKEN.
-    :param asr_options: Parameters for whisper model.
-    :param vad_options: Parameters for VAD model.
-    :param proxy: Proxy for openai requests. e.g. 'http://127.0.0.1:7890'
+    Args:
+        whisper_model: Name of whisper model (tiny, tiny.en, base, base.en, small, small.en, medium,
+            medium.en, large-v1, large-v2, large-v3, distill-large-v3) When a size is configured,
+            the converted model is downloaded from the Hugging Face Hub. Default: ``large-v3``
+        compute_type: The type of computation to use. Can be ``int8``, ``int8_float16``, ``int16``,
+            ``float16`` or ``float32``. Default: ``float16``
+        chatbot_model: The chatbot model to use, currently we support gptbot from , claudebot from Anthropic.
+            OpenAI: gpt-4-0125-preview, gpt-4-turbo-preview, gpt-3.5-turbo-0125, gpt-3.5-turbo
+            Anthropic: claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307
+            Default: ``gpt-3.5-turbo``
+        fee_limit: The maximum fee you are willing to pay for one translation call. Default: ``0.1``
+        consumer_thread: To prevent exceeding the RPM and TPM limits set by OpenAI, the default is TPM/MAX_TOKEN.
+        asr_options: Parameters for whisper model.
+        vad_options: Parameters for VAD model.
+        proxy: Proxy for openai requests. e.g. 'http://127.0.0.1:7890'
     """
-    def __init__(self, model_name='large-v3', compute_type='float16', fee_limit=0.1, consumer_thread=11,
-                 asr_options=None, vad_options=None, preprocess_options=None, proxy=None):
+
+    def __init__(self, whisper_model='large-v3', compute_type='float16', chatbot_model: str = 'gpt-3.5-turbo',
+                 fee_limit=0.1, consumer_thread=4, asr_options=None, vad_options=None, preprocess_options=None,
+                 proxy=None):
+        self.chatbot_model = chatbot_model
         self.fee_limit = fee_limit
         self.api_fee = 0  # Can be updated in different thread, operation should be thread-safe
         self.from_video = set()
@@ -68,8 +74,9 @@ class LRCer:
         if preprocess_options:
             self.preprocess_options.update(preprocess_options)
 
-        self.transcriber = Transcriber(model_name=model_name, compute_type=compute_type,
+        self.transcriber = Transcriber(model_name=whisper_model, compute_type=compute_type,
                                        asr_options=self.asr_options, vad_options=self.vad_options)
+        self.transcribed_paths = []
 
     def transcription_producer(self, transcription_queue, audio_paths, src_lang):
         """
@@ -151,17 +158,29 @@ class LRCer:
                 subtitle_path = final_subtitle.to_lrc()
 
             suffix = subtitle_path.suffix
-            shutil.copy(subtitle_path,
-                        subtitle_path.parents[1] / subtitle_path.name.replace(f'_preprocessed{suffix}', suffix))
+            result_path = subtitle_path.parents[1] / subtitle_path.name.replace(f'_preprocessed{suffix}',
+                                                                                suffix)
+            shutil.copy(subtitle_path, result_path)
+
+            # Bilingual
+            if bilingual_sub:
+                bilingual_subtitle = BilingualSubtitle.from_preprocessed(transcribed_path.parent,
+                                                                         audio_name.replace('_preprocessed', ''))
+                bilingual_subtitle.to_lrc()
+                bilingual_lrc_path = bilingual_subtitle.filename.with_suffix(bilingual_subtitle.suffix)
+                shutil.copy(bilingual_lrc_path, result_path.parent / bilingual_lrc_path.name)
 
             logger.info(f'Translation fee til now: {self.api_fee:.4f} USD')
+
+            self.transcribed_paths.append(result_path)
 
     def _translate(self, audio_name, prompter, target_lang, transcribed_opt_sub, translated_path):
         json_filename = Path(translated_path.parent / (audio_name + '.json'))
         compare_path = Path(translated_path.parent, f'{audio_name}_compare.json')
         if not translated_path.exists():
             # Translate the transcribed json
-            translator = GPTTranslator(prompter=prompter, fee_limit=self.fee_limit, proxy=self.proxy)
+            translator = LLMTranslator(chatbot_model=self.chatbot_model, prompter=prompter, fee_limit=self.fee_limit,
+                                       proxy=self.proxy)
             context = self.context
 
             target_texts = translator.translate(
@@ -191,25 +210,36 @@ class LRCer:
         return final_subtitle
 
     def run(self, paths, src_lang=None, target_lang='zh-cn', prompter='base_trans', context_path=None,
-            skip_trans=False, noise_suppress=False, bilingual_sub=False):
+            skip_trans=False, noise_suppress=False, bilingual_sub=False, clear_temp_folder=False) -> List[str]:
         """
         Split the translation into 2 phases: transcription and translation. They're running in parallel.
         Firstly, transcribe the audios one-by-one. At the same time, translation threads are created and waiting for
         the transcription results. After all the transcriptions are done, the translation threads will start to
         translate the transcribed texts.
 
-        :param paths: Audio/Video paths, can be a list or a single path.
-        :param src_lang: Language of the audio, default to auto-detect.
-        :param target_lang: Target language, default to Mandarin Chinese.
-        :param prompter: Currently, only `base_trans` is supported.
-        :param context_path: path to context config file. (Default to use `context.yaml` in the first audio's directory)
-        :param skip_trans: Whether to skip the translation process. (Default to False)
-        :param noise_suppress: Whether to suppress the noise in the audio. (Default to False)
-        :param bilingual_sub: Whether to generate bilingual subtitles. (Default to False)
+        Args:
+            paths (Union[str, Path, List[Union[str, Path]]]): Audio/Video paths, can be a list or a single path.
+            src_lang (str): Language of the audio, default to auto-detect.
+            target_lang (str): Target language, default to Mandarin Chinese.
+            prompter (str): Currently, only `base_trans` is supported.
+            context_path (str): path to context config file. (Default to use `context.yaml` in the first audio's directory)
+            skip_trans (bool): Whether to skip the translation process. (Default to False)
+            noise_suppress (bool): Whether to suppress the noise in the audio. (Default to False)
+            bilingual_sub (bool): Whether to generate bilingual subtitles. (Default to False)
+            clear_temp_folder (bool): Whether to clear the temporary folder.
+                Note, set this back to False to see more intermediate results if error encountered. (Default to False)
+
+        Returns:
+            List[str]: List of paths to the transcribed files.
+
+        Raises:
+            Exception: If an exception occurs during the transcription or translation process.
         """
+        self.transcribed_paths = []
+
         if not paths:
             logger.warning('No audio/video file given. Skip LRCer.run()')
-            return
+            return []
 
         if isinstance(paths, str) or isinstance(paths, Path):
             paths = [paths]
@@ -251,6 +281,24 @@ class LRCer:
                 raise self.exception
 
         logger.info(f'Totally used API fee: {self.api_fee:.4f} USD')
+
+        if clear_temp_folder:
+            logger.info('Clearing temporary folder...')
+            self.clear_temp_files(audio_paths)
+
+        return self.transcribed_paths
+
+    @staticmethod
+    def clear_temp_files(paths):
+        """
+        Clear the temporary files generated during the transcription and translation process.
+        """
+        temp_folders = set([path.parent for path in paths])
+        for folder in temp_folders:
+            assert folder.name == 'preprocessed', f'Not a temporary folder: {folder}'
+
+            shutil.rmtree(folder)
+            logger.debug(f'Removed {folder}')
 
     @staticmethod
     def to_json(segments: List[Segment], name, lang):

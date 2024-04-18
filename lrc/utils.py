@@ -1,7 +1,6 @@
 #  Copyright (C) 2024. Hao Zheng
 #  All rights reserved.
 
-import gc
 import re
 import subprocess
 import time
@@ -19,8 +18,8 @@ import torch
 import unicodedata
 from lingua import LanguageDetectorBuilder
 
-from openlrc.defaults import supported_languages_lingua
-from openlrc.logger import logger
+from lrc.defaults import supported_languages_lingua
+from lrc.logger import logger
 
 
 def extract_audio(path: Path) -> Path:
@@ -74,7 +73,7 @@ def get_audio_duration(path: Union[str, Path]) -> float:
 
 
 def release_memory(model: torch.nn.Module) -> None:
-    gc.collect()
+    # gc.collect()
     torch.cuda.empty_cache()
     del model
 
@@ -149,13 +148,19 @@ class Timer:
 
 def parse_timestamp(time_stamp: str, fmt: str) -> float:
     """
-    Parse a timestamp from a subtitle file.
+    Parse a timestamp from a subtitle file and convert it to seconds.
 
-    :param time_stamp: Timestamp to parse.
-    :param fmt: Format of `time_stamp`. Supported values are:
-        1. 'lrc' for LRC format, e.g. '1:23.45'
-        2. 'srt' for SRT format, e.g. '01:23:45,678'
-    :return: Time stamp in seconds.
+    Args:
+        time_stamp (str): The timestamp to parse.
+        fmt (str): The format of `time_stamp`. Supported values are:
+            - 'lrc' for LRC format, e.g., '1:23.45'
+            - 'srt' for SRT format, e.g., '01:23:45,678'
+
+    Returns:
+        float: The timestamp in seconds.
+
+    Raises:
+        ValueError: If `time_stamp` does not match the expected format for the specified `fmt`.
     """
 
     if fmt == 'lrc':
@@ -176,15 +181,17 @@ def parse_timestamp(time_stamp: str, fmt: str) -> float:
 
 def format_timestamp(seconds: float, fmt: str = 'lrc') -> str:
     """
-    Convert a timestamp in seconds into a string.
+    Converts a timestamp in seconds into a string in the specified format.
 
-    :param seconds: Timestamp in seconds.
-    :param fmt: Format of the output string. Supported values are:
-        1. 'lrc' for LRC format, e.g. '1:23.45'
-        2. 'srt' for SRT format, e.g. '01:23:45,678'
-    :return: A string representation of the timestamp in the specified format.
+    Args:
+        seconds (float): Timestamp in seconds.
+        fmt (str): Format of the output string. Supported values are:
+            - 'lrc' for LRC format, e.g., '1:23.45'
+            - 'srt' for SRT format, e.g., '01:23:45,678'
+
+    Returns:
+        str: A string representation of the timestamp in the specified format.
     """
-
     # Ensure that the timestamp is non-negative.
     assert seconds >= 0, "non-negative timestamp expected"
 

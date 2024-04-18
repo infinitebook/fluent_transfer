@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QWidget, QGraphicsDropShadowEffect, QFileDialog
 from qfluentwidgets import FluentIcon, InfoBarIcon, InfoBar, InfoBarPosition
 
 from interface.FocusInterface_v303 import Ui_FocusInterface
-from openlrc.openlrc import LRCer
+from lrc.lrc import LRCer
 import os
 import shutil
 

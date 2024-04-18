@@ -9,9 +9,9 @@ from faster_whisper.transcribe import WhisperModel, Segment
 from pysbd.languages import LANGUAGE_CODES
 from tqdm import tqdm
 
-from openlrc.defaults import default_asr_options, default_vad_options
-from openlrc.logger import logger
-from openlrc.utils import Timer, get_audio_duration, spacy_load, format_timestamp
+from lrc.defaults import default_asr_options, default_vad_options
+from lrc.logger import logger
+from lrc.utils import Timer, get_audio_duration, spacy_load, format_timestamp
 
 
 class TranscriptionInfo(NamedTuple):
