@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 
 import concurrent.futures
 import json
@@ -23,6 +22,8 @@ from lrc.translate import LLMTranslator
 from lrc.utils import Timer, extend_filename, get_audio_duration, format_timestamp, extract_audio, \
     get_file_type
 
+from PySide6.QtCore import QObject, Signal, Slot
+
 
 class LRCer:
     """
@@ -42,10 +43,10 @@ class LRCer:
         vad_options: Parameters for VAD model.
         proxy: Proxy for openai requests. e.g. 'http://127.0.0.1:7890'
     """
-
     def __init__(self, whisper_model='large-v3', compute_type='float16', chatbot_model: str = 'gpt-3.5-turbo',
                  fee_limit=0.1, consumer_thread=4, asr_options=None, vad_options=None, preprocess_options=None,
                  proxy=None):
+
         self.chatbot_model = chatbot_model
         self.fee_limit = fee_limit
         self.api_fee = 0  # Can be updated in different thread, operation should be thread-safe
@@ -286,7 +287,7 @@ class LRCer:
             logger.info('Clearing temporary folder...')
             self.clear_temp_files(audio_paths)
 
-        return self.transcribed_paths
+
 
     @staticmethod
     def clear_temp_files(paths):

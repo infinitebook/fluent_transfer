@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 from typing import Union
 
 from anthropic.types import Message

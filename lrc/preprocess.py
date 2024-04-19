@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 import logging
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path

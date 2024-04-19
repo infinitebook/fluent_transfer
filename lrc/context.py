@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 from difflib import get_close_matches
 from pathlib import Path
 from typing import Union

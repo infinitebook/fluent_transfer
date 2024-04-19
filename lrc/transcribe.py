@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 
 from pathlib import Path
 from typing import NamedTuple, Union, List

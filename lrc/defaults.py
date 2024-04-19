@@ -1,5 +1,4 @@
-#  Copyright (C) 2024. Hao Zheng
-#  All rights reserved.
+
 from lingua import Language
 
 # Check https://github.com/SYSTRAN/faster-whisper/blob/master/faster_whisper/transcribe.py#L184 for details

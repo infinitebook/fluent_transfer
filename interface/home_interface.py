@@ -3,7 +3,7 @@ import threading
 from functools import partial
 from threading import Thread
 
-from PySide6.QtCore import QSize, Qt, QThread, Signal, QRunnable, Slot, QThreadPool, QMetaObject, Q_ARG
+from PySide6.QtCore import QSize, Qt, QThread, Signal, QRunnable, Slot, QThreadPool, QMetaObject, Q_ARG , QObject
 from PySide6.QtGui import QColor, QIcon, QDesktopServices
 from PySide6.QtWidgets import QWidget, QGraphicsDropShadowEffect, QFileDialog
 from qfluentwidgets import FluentIcon, InfoBarIcon, InfoBar, InfoBarPosition
@@ -210,6 +210,10 @@ class FocusInterface(Ui_FocusInterface, QWidget):
             except Exception as e:
                 print(f"Error occurred while moving the file: {e}")
 
+        print("on calculation finished")
+
+
+
 class WorkerThread(QThread):
     finished_signal = Signal(str)
 
@@ -219,10 +223,16 @@ class WorkerThread(QThread):
         self.target_lang = target_lang
         self.skip_trans = skip_trans
 
+        self.lrcer = LRCer()
+        self.lrcer.finished.connect(self.on_lrc_finished)
+
     def run(self):
         # 执行lrc任务
         lrcer = LRCer()
         print(self.skip_trans)
         lrcer.run(paths=self.file_path, target_lang=self.target_lang, skip_trans=self.skip_trans)
         # 发送结束结果信号
+
+
+    def on_lrc_finished(self):
         self.finished_signal.emit("lrc任务完成")

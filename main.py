@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
                             SubtitleLabel, setFont, SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
-from interface.home_interface import FocusInterface
+from interface.home_interface02 import FocusInterface
 from interface.setting_interface import SettingInterface
 from interface.view_interface import ViewInterface
 
